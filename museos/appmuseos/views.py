@@ -552,8 +552,8 @@ def user_page_json(request, name):
     user=User.objects.get(username=name)
     museums_user=Museum.objects.filter(user_likes= user) 
     print(museums_user)
-    
-    return JsonResponse(dict(museums_user), safe=False)
+    data=serializers.serialize('json',museums_user)
+    return HttpResponse(data)
     
 def style (request):
     print("1")
