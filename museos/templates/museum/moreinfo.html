@@ -1,0 +1,12 @@
+{% extends "museum/index.html"%}
+
+{% block text %}
+
+    <h1> Esta es la pagina referente al museo {{museum.id}} </h1>
+    <p> {{museum.name}}</p>
+    <p> {{museum.address}}</p>
+    <a href={{museum.url}}>Pagina oficial</a></br>
+    <p> {{museum.accesibility}}</p>
+    
+{% endblock %}
+    

@@ -1,0 +1,9 @@
+        {% if (previous != 0) %}
+           <form method="post" action="/museos">
+           <input type="hidden" name="Previous" valie="{{previous}}">
+           <input type="button" value="Previous!!!">
+        {% endif %}
+        {% if (next != 0) %}
+            <form method="post" action="/museos">
+            <input type="hidden" name="Next" valie="{{next}}">
+            <input type="button" value="Next!!!">

@@ -1,0 +1,26 @@
+{% extends "museum/index.html"%}
+
+{% block text %}
+
+<h1> Museos con mayor numero de Likes: </h1>
+    <form method="get" action="/"><button type="submit">Museos Accesibles</button>
+    <input type="hidden" name="Acces" value="{{acces}}"></form>
+    <p>
+    {% if museums.length != 0 %}
+        {% for museum in museums %}
+            <p>
+             <a href={{museum.url}}>{{museum.name}}</a></br>
+             {{museum.address}} </br>
+             <a href=/museo/{{museum.id}}>Mas info</a>
+              
+            </p>
+            {% if authenticated %}
+                <form method="post" action="/">
+                    <input type="hidden" name="Museum" value="{{museum.name}}">
+                    <input type="submit" value="LIKE!">
+                </form>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </p>
+{% endblock %}

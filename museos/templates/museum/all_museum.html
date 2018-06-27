@@ -1,0 +1,29 @@
+{% extends "museum/index.html"%}
+
+{% block text %}
+    <h1> Museos: </h1>
+    <div class="box">
+        <p>Distrito</p>
+            <form method="get" action='/museos'>
+            <select id="distrito" name="distrito">
+                {% for option in options %}
+                    <option value="{{option}}"> {{option}}</option>
+                {% endfor %}
+            <input type="submit" value="Filtrar">
+            </select>
+            </form>
+        <hr/>
+    </div> 
+    
+    <p>
+    {% for museum in museums %}
+        <p> {{museum.name}} </p>
+        {% if authenticated %}
+            <form method="post" action="/like">
+                <input type="hidden" name="Museum" value="{{museum.name}}">
+                <input type="submit" value="LIKE!">
+            </form>
+        {% endif %}
+    {% endfor %}
+    </p>
+{% endblock %}

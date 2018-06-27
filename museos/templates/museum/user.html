@@ -1,0 +1,81 @@
+{% extends "museum/index.html"%}
+
+{% block text %}
+{% if owner %}
+    <div class="conf">
+        <div class="content">
+            <form action="/{{name}}/config" method="post">
+                <div>
+                    <label for="size">Tamaño letra:</label>
+                    <input type="number" name="size_letter" value="15" min="5" max="20" step="1">
+		        </div>
+		        <div>
+		            <label for="color">Color Fondo:</label>  
+		            <select name="color">
+		                <option value="WHITE"> WHITE</option>
+		                <option value="SILVER">SILVER</option>
+		                <option value="GRAY"> GRAY</option>
+		                <option value="BLACK">BLACK</option>
+		                <option value="RED"> RED</option>
+		                <option value="MARRON"> MARRON</option>
+		                <option value="YELLOW"> YELLOW</option>
+		                <option value="OLIVE"> OLIVE</option>
+		                <option value="LIME"> LIME</option>
+		                <option value="GREEN"> GREEN</option>
+		                <option value="AQUA"> AQUA</option>
+		                <option value="TEAL"> TEAL</option>
+		                <option value="BLUE"> BLUE</option>
+		                <option value="NAVY"> NAVY</option>
+		                <option value="FUCHSIA"> FUCHSIA</option>
+		                <option value="PURPLE"> PURPLE</option>
+		            <input type="hidden" name="option" value="config">
+				    <input type="submit" value="Configurar" >
+		        </div>
+            </form>
+            <form action="/{{name}}/config" method="post">
+                <div>
+                    <label for="name">Nuevo nombre:</label>
+                    <input type="hidden" name="option" value="name">
+                    <input type="text" name="new_name" value="Nuevo Nombre">
+                    <input type="submit" value="Cambiar nombre" >
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+		
+<h1> {{pagina}} </h1>
+    <p>
+    {% if museums.length != 0 %}
+        {% for museum in museums %}
+            <p> {{museum.name}} </p>
+            {% if authenticated %}
+                <form method="post" action="/">
+                    <input type="hidden" name="Museum" value="{{museum.name}}">
+                    <input type="submit" value="LIKE!">
+                </form>
+            {% endif %}
+            </p>
+        {% endfor %}
+         <p>
+        {% if ifpre %}
+           <form method="post" action="/{{name}}">
+           <input type="hidden" name="Next" value="{{next}}">
+           <input type="hidden" name="Previous" value="{{previous}}">
+           <input type="hidden" name="Action" value=False>
+           <input type="submit" value="Previous!!!">
+        {% endif %}
+         </p>
+         <p>
+        {% if ifnext %}
+            <form method="post" action="/{{name}}">
+            <input type="hidden" name="Next" value="{{next}}">
+            <input type="hidden" name="Previous" value="{{previous}}">
+            <input type="hidden" name="Action" value=True>
+            <input type="submit" value="Next!!!">
+        {% endif %} 
+         </p>
+              
+    {% endif %}
+    
+{% endblock %}
