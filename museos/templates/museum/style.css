@@ -7,7 +7,7 @@ html
 
 body
 {
-  background: #e5ebdf url(static/images/wrapper_bg.gif) top left repeat-y;
+  background: #e5ebdf url(http://localhost:8000/static/images/wrapper_bg.gif) top left repeat-y;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -16,7 +16,7 @@ body
 .wrapper
 {
   background: #e5ebdf;
-  background: url(static/images/bg.gif) top left repeat-x;
+  background: url(http://localhost:8000/static/images/bg.gif) top left repeat-x;
   background:{{user.color}} ;
   min-height: 100%;
   height: auto !important;
@@ -94,7 +94,7 @@ form
 {
   margin: 2px 0 0;
   padding: 0;
-  background: #465052 url(static/images/search_bg.gif) bottom left repeat-x;
+  background: #465052 url(http://localhost:8000/static/images/search_bg.gif) bottom left repeat-x;
   color: #grey;
   font-weight: bold;
   line-height: .8em;
@@ -214,7 +214,7 @@ form
   margin: 0;
   padding: 10px 0 0;
   text-align: center;
-  background: url(static/images/tab_normal.gif) top left no-repeat;  
+  background: url(http://localhost:8000/static/images/tab_normal.gif) top left no-repeat;  
   color: #ffffff;
   text-decoration: none;
   font-weight: bold;
@@ -225,12 +225,12 @@ form
 {
   color: #93a6b7;
   color: #EEE;
-  background: url(static/images/tab_over.gif) top left no-repeat;  
+  background: url(http://localhost:8000/static/images/tab_over.gif) top left no-repeat;  
 }
 
 #navigation ul li a.selected, #navigation ul li a.selected:hover
 {
-  background: url(static/images/tab_selected.gif) top left no-repeat;  
+  background: url(http://localhost:8000/static/images/tab_selected.gif) top left no-repeat;  
   color: #343434;
 }
 
@@ -376,7 +376,7 @@ form
 {
   margin: 0 0 0 10px;
   font-size: 10pt;
-  background: url(static/images/comment_corner.gif) top left no-repeat;
+  background: url(http://localhost:8000/static/images/comment_corner.gif) top left no-repeat;
   padding: 20px 0 0 27px;
 }
 
@@ -448,7 +448,7 @@ h4
   clear: both;
   margin: 0;
   padding: 0;
-  background:url(static/images/footer_bg.gif) bottom left repeat-x;
+  background:url(http://localhost:8000/static/images/footer_bg.gif) bottom left repeat-x;
 }
 
 #footHead .head
@@ -736,7 +736,7 @@ code
 
 blockquote
 {
-  background: #ecf2e6 url(static/images/quote.gif) top left no-repeat;
+  background: #ecf2e6 url(http://localhost:8000/static/images/quote.gif) top left no-repeat;
   margin: 5px 20px;
   padding: 5px 5px 5px 43px;
   border: 1px solid #d3d9ce;
@@ -754,7 +754,7 @@ ol li ol li ol
 
 ul
 {
-  list-style-image: url(static/images/arrow.gif);
+  list-style-image: url(http://localhost:8000/static/images/arrow.gif);
   padding-left: 30px;
 }
 

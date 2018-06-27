@@ -7,6 +7,19 @@
     <p> {{museum.address}}</p>
     <a href={{museum.url}}>Pagina oficial</a></br>
     <p> {{museum.accesibility}}</p>
+
+    {% for coment in coments %}
+        {% if coment.museum == museum %}
+            <hr/><p> {{coment.text}}</p></br><hr/>
+        {% endif %}
+    {% endfor %}
     
+    {% if authenticated %}
+        <form action="/coment" method="POST">
+            <textarea name="comentario" rows="10" cols="40">comentario</textarea>
+            <input type="hidden" name="id" value="{{museum.id}}">
+		    <input type="submit" value="Comenta">
+        </form>
+    {% endif %}
 {% endblock %}
     

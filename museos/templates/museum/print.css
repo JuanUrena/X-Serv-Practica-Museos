@@ -575,7 +575,7 @@ ol li ol li ol
 
 ul
 {
-  list-style-image: url(../images/arrow.gif);
+  list-style-image: url(http://localhost:8000/static/images/arrow.gif);
   padding-left: 30px;
 }
 

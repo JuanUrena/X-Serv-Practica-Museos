@@ -17,12 +17,17 @@ urlpatterns = [
     url(r'^like$', 'appmuseos.views.like'),            
     url(r'^$', 'appmuseos.views.main'),
     url(r'^museos$', 'appmuseos.views.list_museum'),
+    url(r'^coment$', 'appmuseos.views.new_coment'),
     url(r'^about$', 'appmuseos.views.information'),
     url(r'^museo/(\d+)', 'appmuseos.views.museum'),
+    url(r'^museo/style.css$', 'appmuseos.views.style'),
+    url(r'^museo/print.css$', 'appmuseos.views.pri'),
     url(r'^style.css$', 'appmuseos.views.style'),
     url(r'^print.css$', 'appmuseos.views.pri'),
     url(r'static/(.*)$', serve, {'document_root': 'sfiles'}),
+    url(r'.*/static/(.*)$', serve, {'document_root': 'sfiles'}),
     url(r'^.*/config$', 'appmuseos.views.configuration'),
+    url(r'^(.*)/json$', 'appmuseos.views.user_page_json'),
     url(r'^(.*)$', 'appmuseos.views.user_page'),
     
 ]

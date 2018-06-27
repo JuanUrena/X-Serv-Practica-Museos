@@ -21,10 +21,11 @@ class Museum(models.Model):
         return(self.name)
     
 class Coment(models.Model):
-    usuario = models.ForeignKey(User)
     museum = models.ForeignKey(Museum)
-    title=models.CharField(max_length=64, default="Título")
     text=models.TextField(default="Comentario")
+    
+    def __str__(self):
+        return(self.text)
     
 class Configuracion_user(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE)

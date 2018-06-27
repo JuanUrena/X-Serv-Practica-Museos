@@ -6,6 +6,7 @@ from urllib.request import urlopen
 from appmuseos.models import Museum
 from appmuseos.models import Page_user
 from appmuseos.models import Configuracion_user
+from appmuseos.models import Coment
 from django.template.loader import get_template
 from django.template import Context 
 from django.contrib.auth import authenticate, login
@@ -13,7 +14,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 import sys
 from django.contrib.auth.models import User
-from appmuseos.models import Coment
+from django.core import serializers
+from django.http import JsonResponse
 
 
 import xml.etree.ElementTree as ET
@@ -456,19 +458,31 @@ def information (request):
                     'pages': get_pagename()})
     template=get_template("museum/about.html")
     return HttpResponse(template.render(about))
-    
+@csrf_exempt     
+def new_coment(request):
+    museo=Museum.objects.get(id=request.POST['id'])
+    coment= Coment(museum=museo, text=request.POST['comentario'])
+    coment.save()
+    return HttpResponseRedirect("/museo/"+request.POST['id'])
+@csrf_exempt     
 def museum (request, id_museum):
     template=get_template("museum/moreinfo.html")
     
     museum=Museum.objects.get(id=id_museum)
-    
-    coments=Coment.objects.get(museum=museum)
-    
+    print(museum)
+    try:
+        coments=Coment.objects.all()
+    except ObjectDoesNotExist:
+        coments=None
+    for c in coments:
+        print(c)
+   
+        
     info = Context({'authenticated':request.user.is_authenticated(),
                     'name':  request.user.username,
                     'pages': get_pagename(),
                     'museum': museum,
-                    'coments': coments})
+                    'coments':coments})
     return HttpResponse(template.render(info))
     
 @csrf_exempt         
@@ -532,6 +546,14 @@ def user_page (request,name):
         return HttpResponseNotFound("Page not found")
         
     return HttpResponse(template.render(museums))
+    
+    
+def user_page_json(request, name):
+    user=User.objects.get(username=name)
+    museums_user=Museum.objects.filter(user_likes= user) 
+    print(museums_user)
+    
+    return JsonResponse(dict(museums_user), safe=False)
     
 def style (request):
     print("1")
