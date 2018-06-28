@@ -3,9 +3,16 @@
 {% block text %}
 
 <h1> Museos con mayor numero de Likes: </h1>
-    <form method="get" action="/"><button type="submit">Museos Accesibles</button>
-    <input type="hidden" name="Acces" value="{{acces}}"></form>
-    <p>
+    {% if acces == 'True' %}
+        <form method="get" action="/"><button type="submit">Solo Accesibles</button>
+        <input type="hidden" name="Acces" value="{{acces}}"></form>
+        <p>
+    {% else %}
+        <form method="get" action="/"><button type="submit">Todos</button>
+        <input type="hidden" name="Acces" value="{{acces}}"></form>
+        <p>
+    {% endif %}
+    
     {% if museums.length != 0 %}
         {% for museum in museums %}
             <p>

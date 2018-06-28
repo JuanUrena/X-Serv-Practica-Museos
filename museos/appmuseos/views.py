@@ -85,25 +85,23 @@ def get_pagename():
 
 #acces=True, solo muestro accesbles
 def get_topfive(acces):
+    print(acces)
     tool=Museum.objects.all()
     tool=tool.order_by('num_likes')
-    tool=tool.exclude(num_likes=0)
+
     if acces:
-        tool=tool.exclude(accessibility=False)
+        print("che")
+        tool=tool.exclude(accessibility="False")
+        
+    tool=tool.exclude(num_likes=0)
+
     tool=tool[:5]
     return tool
     
-
-
-
-def parser_xml():
-    data_xml=urlopen(SOURCE)
-    print('<<<Fichero cargado desde la pagina Origen>>>')
-#Information form: 
-#Pasamos a String
-    tree=ET.parse(data_xml)
+def parser_xml(req):
+    xmlFile = urlopen(SOURCE)
+    tree = ET.parse(xmlFile)
     root = tree.getroot()
-    
     Museum.objects.all().delete()
     for listMuseos in root.iter('contenido'):
         try:
@@ -206,6 +204,7 @@ def parser_xml():
                     print ("Campo distrito NO encontrado")
                     pass
 
+
                 datosContacto = museo.find('atributo[@nombre="DATOSCONTACTOS"]')
                 try:
                     telefono = datosContacto.find('atributo[@nombre="TELEFONO"]').text
@@ -224,80 +223,106 @@ def parser_xml():
         except AttributeError:
             print("***Campo no encontrado para: " + nombre + "***")
             pass
-        museo = Museum(name = nombre, description = descripcion, horary = horario, transport = transporte, accessibility = accesibilidad, url = contentURL, address = clase_vial+ ": " +nombre_via +", Nº: "+ numero +"|| "+ localidad +"  ("+ cod_postal+")", barrio = barrio, district = distrito,number_phone = telefono, mail = email)
+
+
+
+        museo = Museum(name = nombre, description = descripcion, horary = horario, transport = transporte,
+                      accessibility = accesibilidad, url = contentURL, address = clase_vial + ": " +nombre_via + ", Nº:"+
+                      numero + "|| " + localidad +"("+ cod_postal +")", barrio = barrio, district = distrito,
+                      number_phone = telefono, mail = email)
         print("!!!!!!!!!!!!!!!!!!!!!!!!! Antes de guardar Museo !!!!!!!!!!!!!!!!!!!!!!!!!")
         museo.save()
         print("!!!!!!!!!!!!!!!!!!!!!!!!! Despues de guardar Museo !!!!!!!!!!!!!!!!!!!!!!!!!")
         nombre = descripcion = horario = transporte = accesibilidad = contentURL = None
-nombre_via = clase_vial = numero = localidad = cod_postal = barrio = distrito = telefono = email = None
+        nombre_via = clase_vial = numero = localidad = cod_postal = barrio = distrito = telefono = email = None
+
+    return HttpResponseRedirect('/')
+
+
 
 def main_json(request):
    museum=get_topfive(False)
    data=serializers.serialize('json',museum) 
-   return HttpResponse(data)
+    
+   template=get_template("museum/json.html")
+   comtext=Context({'data':data})
+   return HttpResponse(template.render(comtext))
    
 @csrf_exempt    
 def main (request):
     print("AQUI")
-    #parser_xml()
-    template=get_template("museum/home.html")
-    try:
-        Accesibility= request.GET['Acces']
-        if Accesibility=='True':    
-            museums = Context({'authenticated':request.user.is_authenticated(),
+    charge_museums=Museum.objects.all()
+    if len(charge_museums)==0:
+        template=get_template("museum/new.html")
+        museums = Context({'authenticated':request.user.is_authenticated(),
+                                    'name':  request.user.username,
+                                    'pages': get_pagename(),
+                                    'inicio':True})
+        return HttpResponse(template.render(museums))
+    else:
+        template=get_template("museum/home.html")
+        try:
+            Accesibility = request.GET['Acces']
+            if Accesibility=='True':    
+                print("1")
+                museums = Context({'authenticated':request.user.is_authenticated(),
+                                    'name':  request.user.username,
+                                    'pages': get_pagename(),
+                                    'museums': get_topfive(True),
+                                    'acces':'False',
+                                    'inicio':True})
+                answer= HttpResponse(template.render(museums))                        
+                answer.set_cookie('cookie_accesibility', True, 3600) 
+            else:
+                print("2")
+                museums = Context({'authenticated':request.user.is_authenticated(),
+                                    'name':  request.user.username,
+                                    'pages': get_pagename(),
+                                    'museums': get_topfive(False),
+                                    'acces':'True',
+                                    'inicio':True})
+                answer= HttpResponse(template.render(museums))                        
+                answer.set_cookie('cookie_accesibility', False, 3600)                    
+            return answer 
+             
+        except:
+            print("error")
+            pass
+        
+        
+        if 'cookie_accesibility' in request.COOKIES:
+            Accesibility=request.COOKIES['cookie_accesibility']
+            print("ESTE:"+ Accesibility)
+            if Accesibility=='True':
+                print("hooallalaa")
+                museums=Context({'authenticated':request.user.is_authenticated(),
                                 'name':  request.user.username,
                                 'pages': get_pagename(),
                                 'museums': get_topfive(True),
                                 'acces':'False',
                                 'inicio':True})
-            answer= HttpResponse(template.render(museums))                        
-            answer.set_cookie('cookie_accesibility', True, 3600) 
-        else:
-            museums = Context({'authenticated':request.user.is_authenticated(),
-                                'name':  request.user.username,
-                                'pages': get_pagename(),
-                                'museums': get_topfive(False),
-                                'acces':'True',
-                                'inicio':True})
-            answer= HttpResponse(template.render(museums))                        
-            answer.set_cookie('cookie_accesibility', False, 3600)                    
-        return answer 
-         
-    except:
-        pass
-    
-    
-    if 'cookie_accesibility' in request.COOKIES:
-        Accesibility=request.COOKIES['cookie_accesibility']
-        
-        if Accesibility:
-            museums=Context({'authenticated':request.user.is_authenticated(),
+                answer= HttpResponse(template.render(museums))                                              
+                return answer
+                
+        print("tttt")        
+        museums = Context({'authenticated':request.user.is_authenticated(),
                             'name':  request.user.username,
                             'pages': get_pagename(),
-                            'museums': get_topfive(True),
-                            'acces':'False',
+                            'museums': get_topfive(False),
+                            'acces':'True',
                             'inicio':True})
-            answer= HttpResponse(template.render(museums))                          
-            answer.set_cookie('cookie_accesibility', True, 3600)                    
-            return answer
-            
-            
-    museums = Context({'authenticated':request.user.is_authenticated(),
-                        'name':  request.user.username,
-                        'pages': get_pagename(),
-                        'museums': get_topfive(False),
-                        'acces':'True',
-                        'inicio':True})
-                        
-    answer= HttpResponse(template.render(museums))                          
-    answer.set_cookie('cookie_accesibility', False, 3600)                    
-    return answer
+                            
+        answer= HttpResponse(template.render(museums))                                              
+        return answer
     
     
 def list_museum_json(request):
     museums=Museum.objects.all()
     data=serializers.serialize('json',museums)
-    return HttpResponse(data)
+    
+    template=get_template("museum/json.html")
+    comtext=Context({'data':data})
+    return HttpResponse(template.render(comtext))
     
     
 def list_museum (request):
@@ -434,7 +459,7 @@ def user_page (request,name):
     
     except ObjectDoesNotExist:
         print("bye")
-        return HttpResponseNotFound("Page not found")
+        return HttpResponseNotFound("404:Page not found")
         
     return HttpResponse(template.render(museums))
     
@@ -445,12 +470,11 @@ def user_page_json(request, name):
     print(museums_user)
     data=serializers.serialize('json',museums_user)
     
-    template=get_template("museum/user.html")
-    
-    return HttpResponse(data)
+    template=get_template("museum/json.html")
+    comtext=Context({'data':data})
+    return HttpResponse(template.render(comtext))
     
 def style (request):
-    print("1")
     try:
         print("try")
         user=request.user
@@ -465,7 +489,6 @@ def style (request):
         return HttpResponse(style.render(), content_type='text/css')
 
 def pri (request):
-    print("2")
     try:
         user=request.user
         pri=get_template("museum/print.css")
@@ -484,7 +507,7 @@ def mylog(request):
     print("Log")
     username = request.POST['user']
     password = request.POST['password']
-    
+    print(password)
     user = authenticate(username=username, password=password)
     
     print(user)

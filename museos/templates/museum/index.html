@@ -35,8 +35,8 @@
 		</div>
 	    {% load static %}
         <div class="icon">
-          <img src="{% static 'images/carnet-FEAM.jpg'%}" width="200" height="160"
-          alt="My fantastic Webdings Logo" />
+          <img src="{% static 'images/banner.jpg'%}" width="200" height="160"
+          alt="My Banner" />
         </div>
         <div id="title">
           <h1>
@@ -88,13 +88,43 @@
 			<br />
 			<h3>Contact</h3>
 			<div class="content">
-			<form action="/mail" method="post">
-			  <label for="email">e-mail</label><br />
-			  <input type="text" name="email" id="email" size="22" tabindex="81" /><br />
-			  <label for="message">message</label><br />
-			  <textarea cols="18" rows="5" name="message" id="message" tabindex="82"></textarea><br /><br />
-			  <input type="submit" name="submit" value="Send" class="submit" tabindex="83" />
+			<form name="eMailer">
+			  <label>
+				<span>Email*:</span>
+				  <input type="email" placeholder="tuemail@servidor.com" name="email" id="email" required>
+			  </label>
+				<label>
+				  <span>Mensaje:</span>
+					<textarea id="mensaje" name="mensaje" placeholder="Comienza a escribir..." style="height:200px" required></textarea>
+				  <input class="sendButton" type="submit" name="Submit" value="Enviar" 
+				  onClick="mailThisUrl();"> 
 			</form>
+			<script language="JavaScript1.2"> 
+				var good; 
+				function checkEmailAddress(field) { 
+					// the following expression must be all on one line... 
+					var goodEmail = field.value.match(/b(^(S+@).+((.com)|(.net)|(.edu)|(.mil)|(.gov)|(.org)|(..{2,2}))$)b/gi); 
+					if (goodEmail){ 
+						good = true 
+					} else { 
+						alert('Por favor introduce un e-mail valido') 
+						field.focus() 
+						field.select() 
+						good = false 
+					} 
+				} 
+				t=document.eMailer.email.value;
+				u = "APP_MUSEOS"; 
+				m = document.eMailer.mensaje.value;
+				function mailThisUrl(){ 
+					good = true 
+					if (good){ 
+					// the following expression must be all on one line... 
+					window.location = "mailto:museos.sat@gmail.com?subject="+u+"&body="+"Email:"+ t+"||||||||||||||||||Text:" + m;
+					location.reload(true);
+					} 
+				} 
+			</script> 
 			</div>
 			<br class="clear" />
           </div>
@@ -111,7 +141,8 @@
 		  <div class="clear"></div>
           <div id="copyright">
             <div class="container">
-              &copy; Copyright 2006 <a href="http://aaron.ganschow.us/">Aaron Ganschow</a>
+              <p> Esta aplicacion utiliza datos de portal de datos abiertos de la ciudad d Madrid</p>
+             <a href="https://datos.madrid.es/portal/site/egob/menuitem.c05c1f754a33a9fbe4b2e4b284f1vgnextoid=118f2fdbecc63410VgnVCM1000000b205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD&vgnextfmt=default">"Link"</a>
             </div>
           </div>
         </div>
