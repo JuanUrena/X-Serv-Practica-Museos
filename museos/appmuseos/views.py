@@ -16,6 +16,7 @@ import sys
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import JsonResponse
+from appmuseos.models import Time_like
 
 
 import xml.etree.ElementTree as ET
@@ -82,6 +83,7 @@ def get_pagename():
     return Page_user.objects.all()    
             
 
+#acces=True, solo muestro accesbles
 def get_topfive(acces):
     tool=Museum.objects.all()
     tool=tool.order_by('num_likes')
@@ -92,136 +94,6 @@ def get_topfive(acces):
     return tool
     
 
-def extract_location(item):
-    try:
-        lane=item.find('atributos/atributo[@nombre="CLASE-VIAL"]').text
-        street=item.find('atributos/atributo[@nombre="NOMBRE-VIA"]').text
-        number=item.find('atributos/atributo[@nombre="NUM"]').text
-        postal_code=item.find('atributos/atributo[@nombre="CODIGO-POSTAL"]').text
-        locality=item.find('atributos/atributo[@nombre="LOCALIDAD"]').text
-        
-        address = lane + " : " + street + " | Num: " + number
-        address += " | CP: " + postal_code + " | Localidad: " + locality 
-        
-        barrio = item.find('atributos/atributo[@nombre="BARRIO"]').text
-        
-        district=item.find('atributos/atributo[@nombre="DISTRITO"]').text
-        
-    except AtributeError:
-        print("<<<Error en los datos de la Localizacion>>>")
-        address, barrio, distric ='','', ''
-        pass
-        
-    return address, barrio, district
-
-def extract_contact(item):
-    try:
-        mail=item.find('atributos/atributo[@nombre="EMAIL"]').text
-        telephone=item.find('atributos/atributo[@nombre="TELEFONO"]').text
-    except:
-        print("<<<Error en los datos de la Localizacion>>>")
-        mail, telephone ='',''
-        pass
-        
-    return mail, telephone
-
-
-def extract_data(item):
-
-    nombre, description, horary, transport = '', '', '', ''
-    accessibility = False
-    url, data_location, data_contacts = '','',''
-    
-    try:
-        name=item.find('atributos/atributo[@nombre="NOMBRE"]').text
-        print(name)
-    except :
-        print ("name_error")
-        name=""
-        pass
-    try:
-        description=item.find('atributos/atributo[@nombre="DESCRIPCION-ENTIDAD"]').text
-        print(description)
-    except :
-        print ("description_error")
-        description=""
-        pass
-    try:
-       horary=item.find('atributos/atributo[@nombre="HORARIO"]').text
-       print(horary)
-    except :
-        print ("horary_error")
-        horary=""
-        pass
-    try:
-        transport=item.find('atributos/atributo[@nombre="TRANSPORTE"]').text
-        print(transport)
-    except :
-        print ("transport_error")
-        transport=""
-        pass
-    try:
-        if item.find('atributos/atributo[@nombre="ACCESIBILIDAD"]').text=="1":
-            
-            accessibility = True
-        else: 
-            accessibility = False
-            
-        print(accessibility)
-    except :
-        print ("accessibility_error")
-        accessibility=False
-        pass
-    try:
-        url=item.find('atributos/atributo[@nombre="CONTENT-URL"]').text
-    except :
-        print ("url_error")
-        url=""
-        pass
-    try:
-        lane=item.find('atributo[@nombre="CLASE-VIAL"]').text
-        street=item.find('atributo[@nombre="NOMBRE-VIA"]').text
-        number=item.find('atributo[@nombre="NUM"]').text
-        postal_code=item.find('atributo[@nombre="CODIGO-POSTAL"]').text
-        locality=item.find('atributo[@nombre="LOCALIDAD"]').text
-        
-        address = lane + " : " + street + " | Num: " + number
-        address += " | CP: " + postal_code + " | Localidad: " + locality 
-    except:
-        print ("address_error")
-        address=""
-        pass
-    try:
-        barrio = item.find('/atributo[@nombre="BARRIO"]').text
-    except:
-        print ("barrio_error")
-        barrio=""
-        pass
-    try :
-        district=item.find('/atributo[@nombre="DISTRITO"]').text
-    except:
-        print ("district_error")
-        district=""
-        pass
-    
-    try:         
-        data_contacts=item.find('atributos/atributo[@nombre="DATOSCONTACTOS"]').text
-        mail, numbre_phone=extract_contact(data_contacts)
-    except :
-        print ("data_contacts_error")
-        name=""
-        pass
-        
-    try:
-        museum = Museum(name=name, description=description, horary=horary, transport=transport,
-        address=address, barrio=barrio, district=district, number_phone=number_phone,
-        mail=mail,accessibility=accessibility, url=url)
-        museum.save()
-        print('<<<Museo Guardado>>>')
-        
-    except:
-        print('<<<Error al guardar museo, es posible que aalgun dato este dañadoo>>>')
-        pass
 
 
 def parser_xml():
@@ -352,19 +224,22 @@ def parser_xml():
         except AttributeError:
             print("***Campo no encontrado para: " + nombre + "***")
             pass
-        museo = Museum(name = nombre, description = descripcion, horary = horario, transport = transporte, accessibility = accesibilidad, url = contentURL, address = clase_vial+" "+nombre_via +" "+ numero +" "+ localidad +" "+ cod_postal, barrio = barrio, district = distrito,number_phone = telefono, mail = email)
+        museo = Museum(name = nombre, description = descripcion, horary = horario, transport = transporte, accessibility = accesibilidad, url = contentURL, address = clase_vial+ ": " +nombre_via +", Nº: "+ numero +"|| "+ localidad +"  ("+ cod_postal+")", barrio = barrio, district = distrito,number_phone = telefono, mail = email)
         print("!!!!!!!!!!!!!!!!!!!!!!!!! Antes de guardar Museo !!!!!!!!!!!!!!!!!!!!!!!!!")
         museo.save()
         print("!!!!!!!!!!!!!!!!!!!!!!!!! Despues de guardar Museo !!!!!!!!!!!!!!!!!!!!!!!!!")
         nombre = descripcion = horario = transporte = accesibilidad = contentURL = None
 nombre_via = clase_vial = numero = localidad = cod_postal = barrio = distrito = telefono = email = None
 
-   
+def main_json(request):
+   museum=get_topfive(False)
+   data=serializers.serialize('json',museum) 
+   return HttpResponse(data)
    
 @csrf_exempt    
 def main (request):
     print("AQUI")
-    
+    #parser_xml()
     template=get_template("museum/home.html")
     try:
         Accesibility= request.GET['Acces']
@@ -373,7 +248,8 @@ def main (request):
                                 'name':  request.user.username,
                                 'pages': get_pagename(),
                                 'museums': get_topfive(True),
-                                'acces':'False'})
+                                'acces':'False',
+                                'inicio':True})
             answer= HttpResponse(template.render(museums))                        
             answer.set_cookie('cookie_accesibility', True, 3600) 
         else:
@@ -381,7 +257,8 @@ def main (request):
                                 'name':  request.user.username,
                                 'pages': get_pagename(),
                                 'museums': get_topfive(False),
-                                'acces':'True'})
+                                'acces':'True',
+                                'inicio':True})
             answer= HttpResponse(template.render(museums))                        
             answer.set_cookie('cookie_accesibility', False, 3600)                    
         return answer 
@@ -398,7 +275,8 @@ def main (request):
                             'name':  request.user.username,
                             'pages': get_pagename(),
                             'museums': get_topfive(True),
-                            'acces':'False'})
+                            'acces':'False',
+                            'inicio':True})
             answer= HttpResponse(template.render(museums))                          
             answer.set_cookie('cookie_accesibility', True, 3600)                    
             return answer
@@ -408,11 +286,19 @@ def main (request):
                         'name':  request.user.username,
                         'pages': get_pagename(),
                         'museums': get_topfive(False),
-                        'acces':'True'})
+                        'acces':'True',
+                        'inicio':True})
                         
     answer= HttpResponse(template.render(museums))                          
     answer.set_cookie('cookie_accesibility', False, 3600)                    
     return answer
+    
+    
+def list_museum_json(request):
+    museums=Museum.objects.all()
+    data=serializers.serialize('json',museums)
+    return HttpResponse(data)
+    
     
 def list_museum (request):
     #parser_xml()
@@ -447,7 +333,8 @@ def list_museum (request):
                         'name':  request.user.username,
                         'pages': get_pagename(),
                         'museums': museums,
-                        'options': districts})
+                        'options': districts,
+                        'inicio':False})
     print("0")
     return HttpResponse(template.render(museums))
   
@@ -455,7 +342,8 @@ def information (request):
     print("about")
     about = Context({'authenticated':request.user.is_authenticated(),
                     'name':  request.user.username,
-                    'pages': get_pagename()})
+                    'pages': get_pagename(),
+                    'inicio':False})
     template=get_template("museum/about.html")
     return HttpResponse(template.render(about))
 @csrf_exempt     
@@ -482,7 +370,8 @@ def museum (request, id_museum):
                     'name':  request.user.username,
                     'pages': get_pagename(),
                     'museum': museum,
-                    'coments':coments})
+                    'coments':coments,
+                    'inicio':False})
     return HttpResponse(template.render(info))
     
 @csrf_exempt         
@@ -534,11 +423,13 @@ def user_page (request,name):
                             'pages': get_pagename(),
                             'pagina':Page_user.objects.get(user=user).page,
                             'museums': list_mu,
+                            'likes':Time_like.objects.filter(user=user),
                             'ifpre':ifpre,
                             'ifnext':ifnext,
                             'previous':pre,
                             'next':next,
-                            'owner':owner})
+                            'owner':owner,
+                            'inicio':False})
                             
     
     except ObjectDoesNotExist:
@@ -553,6 +444,9 @@ def user_page_json(request, name):
     museums_user=Museum.objects.filter(user_likes= user) 
     print(museums_user)
     data=serializers.serialize('json',museums_user)
+    
+    template=get_template("museum/user.html")
+    
     return HttpResponse(data)
     
 def style (request):
@@ -614,9 +508,11 @@ def like(request):
             return HttpResponseRedirect('/museos')  
         except ObjectDoesNotExist:
             print('añado')      
-            museum_like.num_likes +=1
             museum_like.user_likes.add(user)
+            museum_like.num_likes=museum_like.num_likes+1
             museum_like.save()
+            date=Time_like(museum=museum_like, user=user)
+            date.save()
             return HttpResponseRedirect('/museos')
 
 @csrf_exempt

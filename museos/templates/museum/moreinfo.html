@@ -3,11 +3,29 @@
 {% block text %}
 
     <h1> Esta es la pagina referente al museo {{museum.id}} </h1>
-    <p> {{museum.name}}</p>
+    <a href={{museum.url}}>{{museum.name}}</a></br>
     <p> {{museum.address}}</p>
-    <a href={{museum.url}}>Pagina oficial</a></br>
-    <p> {{museum.accesibility}}</p>
-
+    <p>Barrio: {{museum.barrio}}</p>
+    <p>Distrito: {{museum.district}}</p>
+    <p> 
+    {% if museum.accesibility %}
+        El museo es accesible.
+    {% else %}    
+        El museo no es accesible.
+    {% endif %}
+    </p>
+    <p>{{museum.description}}</p>
+    <p>{{museum.horary}}</p>
+    <p>{{museum.transport}}</p>
+    <p> Contacto:</p>
+    <p> {{museum.number_phone}}</p>
+    <p> {{museum.mail}}</p>
+    {% if authenticated %}
+        <form method="post" action="/">
+            <input type="hidden" name="Museum" value="{{museum.name}}">
+            <input type="submit" value="LIKE!">
+        </form>
+    {% endif %}
     {% for coment in coments %}
         {% if coment.museum == museum %}
             <hr/><p> {{coment.text}}</p></br><hr/>
@@ -16,7 +34,7 @@
     
     {% if authenticated %}
         <form action="/coment" method="POST">
-            <textarea name="comentario" rows="10" cols="40">comentario</textarea>
+            <textarea name="comentario" rows="10" cols="40" placeholder="comentario"></textarea>
             <input type="hidden" name="id" value="{{museum.id}}">
 		    <input type="submit" value="Comenta">
         </form>

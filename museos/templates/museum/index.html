@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+  {% load static %}
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<meta name="author" content="Aaron Ganschow" />
@@ -9,7 +10,9 @@
       Museos Madrid
     </title>
     <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="print.css" type="text/css" media="print" /></head>
+    <link rel="stylesheet" href="print.css" type="text/css" media="print" />
+    <link rel="shortcut icon" type="image/ico"" href="{% static 'images/favicon.ico' %}"/>
+    </head>
   <body>
     <div class="wrapper">
       <div class="container">
@@ -19,12 +22,12 @@
             {% if authenticated %}
                 <form action="/logout" method="get">
 				    <input type="text" name="user" value={{name}} readonly>
-				    <input type="submit" value=EXIT >
+				    <input type="submit" value=EXIT onclick="javascript:alert('Esta cerrando sesión');" >
                 </form>
 			{% else %}
 			    <form action="/login" method="post">
-				    <input type="text" name="user" value="Usuario">
-				    <input type="password" name="password" value="Contraseña">
+				    <input type="text" name="user" placeholder="Usuario" required>
+				    <input type="password" name="password" placeholder="Contraseña" required>
 				    <input type="submit" value="Log In">
 			    </form>
 			 {% endif %}
@@ -45,19 +48,26 @@
         </div>
         <div id="navigation">
           <ul>
+            {% if not inicio %}
+                <li>
+                    <a href="/">Inicio</a>
+                </li> 
+            {% endif %}	  
             <li>
-              <a href="/">Inicio</a>
-            </li> 	  
-            <li>
-              <a href="/museos">Museos</a>
+              <a href="/museos">Todos</a>
             </li>
             {% if authenticated %}
                 <li>
                 <a href="/{{name}}">Mi página</a>
                 </li>
             {% endif %}
+            {% if authenticated %}
+                <li>
+                <a href="/{{name}}/json">Mi JSON</a>
+                </li>
+            {% endif %}
             <li>
-              <a href="/about">About</a>            </li>
+              <a href="/about" >About</a>            </li>
           </ul>
         </div>
         <br class="clear" />
@@ -78,7 +88,7 @@
 			<br />
 			<h3>Contact</h3>
 			<div class="content">
-			<form action="#" method="post">
+			<form action="/mail" method="post">
 			  <label for="email">e-mail</label><br />
 			  <input type="text" name="email" id="email" size="22" tabindex="81" /><br />
 			  <label for="message">message</label><br />

@@ -7,11 +7,12 @@
             <form action="/{{name}}/config" method="post">
                 <div>
                     <label for="size">Tamaño letra:</label>
-                    <input type="number" name="size_letter" value="15" min="5" max="20" step="1">
+                    <input type="number" name="size_letter" value="15" min="10" max="30" step="1">
 		        </div>
 		        <div>
 		            <label for="color">Color Fondo:</label>  
 		            <select name="color">
+		                <option value=""> Por defecto</option>
 		                <option value="WHITE"> WHITE</option>
 		                <option value="SILVER">SILVER</option>
 		                <option value="GRAY"> GRAY</option>
@@ -29,15 +30,14 @@
 		                <option value="FUCHSIA"> FUCHSIA</option>
 		                <option value="PURPLE"> PURPLE</option>
 		            <input type="hidden" name="option" value="config">
-				    <input type="submit" value="Configurar" >
+				    <input type="submit" value="Configurar" onclick="javascript:if(confirm('¿Quieres cambiar la configuracion, es posible que algunos elementos no se aprecien bien?'));" >
 		        </div>
             </form>
             <form action="/{{name}}/config" method="post">
                 <div>
-                    <label for="name">Nuevo nombre:</label>
                     <input type="hidden" name="option" value="name">
-                    <input type="text" name="new_name" value="Nuevo Nombre">
-                    <input type="submit" value="Cambiar nombre" >
+                    <input type="text" name="new_name" placeholder="Nuevo Nombre" required>
+                    <input type="submit" value="Cambiar nombre"onclick="javascript:alert('Está cambiando el nombre de su página');" >
                 </div>
             </form>
         </div>
@@ -48,7 +48,16 @@
     <p>
     {% if museums.length != 0 %}
         {% for museum in museums %}
-            <p> {{museum.name}} </p>
+            <p>
+                <a href={{museum.url}}>{{museum.name}}</a></br>
+                {{museum.address}} </br>
+                {% for like in likes %}
+                    {% if like.museum == museum %}
+                        <p>Añadido el: {{like.date}}</p>
+                    {% endif %}
+                {% endfor %}
+                <a href=/museo/{{museum.id}}>Mas info</a>
+            </p>
             {% if authenticated %}
                 <form method="post" action="/">
                     <input type="hidden" name="Museum" value="{{museum.name}}">

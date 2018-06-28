@@ -17,7 +17,10 @@
     
     <p>
     {% for museum in museums %}
-        <p> {{museum.name}} </p>
+        <p>
+            <a href={{museum.url}}>{{museum.name}}</a></br>
+            <a href=/museo/{{museum.id}}>Mas info</a>
+        </p>
         {% if authenticated %}
             <form method="post" action="/like">
                 <input type="hidden" name="Museum" value="{{museum.name}}">

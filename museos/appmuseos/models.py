@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
     
 class Museum(models.Model):
-    name=models.CharField(max_length=32, unique=True)
+    name=models.CharField(max_length=128, unique=True)
     description=models.TextField(null=True)
     horary=models.TextField(null=True)
     transport=models.TextField(default="No Data", null=True)
@@ -21,7 +21,7 @@ class Museum(models.Model):
         return(self.name)
     
 class Coment(models.Model):
-    museum = models.ForeignKey(Museum)
+    museum = models.ForeignKey(Museum,on_delete=models.CASCADE)
     text=models.TextField(default="Comentario")
     
     def __str__(self):
@@ -41,7 +41,12 @@ class Page_user(models.Model):
     
     def __str__(self):
         return self.page    
-        
+    
+class Time_like(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    museum=models.ForeignKey(Museum, on_delete=models.CASCADE)
+    date=models.DateTimeField(auto_now_add=True)
+      
 class Meta:
     ordering=('district')
 
