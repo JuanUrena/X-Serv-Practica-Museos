@@ -2,6 +2,7 @@
 Repositorio de inicio de la práctica final - Curso 2017/2018
 
 Autor: Juan Ureña García-Gasco
+
 Grado: Ingeniería en Tecnologías de la Telecomunicación e Ingeniería Aeroespacial en Aeronavegación
 
 Usuario en el laboratorio: jurenag
