@@ -9,10 +9,14 @@ Usuario en el laboratorio: jurenag
 
 Usuario en Github: JuanUrena
 
+
+
 Parte obligatoria:
 
    Cumple todas las funciones neccesarias. Comentar especial dificultad en el parser, por no entender bien la organización de este al principio.Gracias a varios de mis compañeros, me explicaron como lo habían podido dividir de una forma mucho más sencilla de las que yo pensaba.Por lo que adapté sus ideas a mi parser xml tras ver que era más sencillo de lo que pensaba.     
    Por un despiste comento los filtrados por distritos en la parte opcional, aunque es de la básica y funciona correctamente. 
+
+
 
 Parte opcional:
 
@@ -24,7 +28,10 @@ Parte opcional:
   
   Creación de elemento Mi pagina y Mi JSON para usuarios registrados en el menu, para hacer mas ágil su acceso. 
   
+  
+  
 Videos:
+
   [Basica](https://youtu.be/Qji4PetWMQs)
   
   [Opcional](https://youtu.be/TLeK2ikyZOg)
