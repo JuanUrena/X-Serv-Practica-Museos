@@ -86,16 +86,20 @@ def get_pagename():
 #acces=True, solo muestro accesbles
 def get_topfive(acces):
     print(acces)
-    tool=Museum.objects.all()
-    tool=tool.order_by('num_likes')
-
+    
     if acces:
         print("che")
-        tool=tool.exclude(accessibility="False")
+        tool=Museum.objects.filter(accessibility=True)
+        for m in tool:
+            print (m.num_likes)
+    else:
+        tool=Museum.objects.all()
         
+    tool=tool.order_by('num_likes')
     tool=tool.exclude(num_likes=0)
-
+    print(tool)
     tool=tool[:5]
+    print(tool)
     return tool
     
 def parser_xml(req):
@@ -272,7 +276,7 @@ def main (request):
                                     'acces':'False',
                                     'inicio':True})
                 answer= HttpResponse(template.render(museums))                        
-                answer.set_cookie('cookie_accesibility', True, 3600) 
+                answer.set_cookie('acces', True, 3600) 
             else:
                 print("2")
                 museums = Context({'authenticated':request.user.is_authenticated(),
@@ -282,7 +286,7 @@ def main (request):
                                     'acces':'True',
                                     'inicio':True})
                 answer= HttpResponse(template.render(museums))                        
-                answer.set_cookie('cookie_accesibility', False, 3600)                    
+                answer.set_cookie('acces', False, 3600)                    
             return answer 
              
         except:
@@ -290,8 +294,9 @@ def main (request):
             pass
         
         
-        if 'cookie_accesibility' in request.COOKIES:
-            Accesibility=request.COOKIES['cookie_accesibility']
+        if 'acces' in request.COOKIES:
+            cookie=request.COOKIES
+            Accesibility=cookie['acces']
             print("ESTE:"+ Accesibility)
             if Accesibility=='True':
                 print("hooallalaa")
@@ -343,12 +348,13 @@ def list_museum (request):
         print(museums)
     except:
         museums=Museum.objects.all()
-        pass
         
-    if 'cookie_accesibility' in request.COOKIES:
-        Accesibility=request.COOKIES['cookie_accesibility']
+    if 'acces' in request.COOKIES:
+        cookie=request.COOKIES
+        accesibility=cookie['acces']
+        print (accesibility)
         print("hay cookie")
-        if Accesibility:
+        if accesibility=='True':
             print("hay accesiilidad")
             museums=museums.exclude(accessibility=False)
     
@@ -407,9 +413,10 @@ def user_page (request,name):
         user=User.objects.get(username=name)
         museums=Museum.objects.filter(user_likes= user) 
         
-        if 'cookie_accesibility' in request.COOKIES:
-            Accesibility=request.COOKIES['cookie_accesibility']
-            if Accesibility:
+        if 'acces' in request.COOKIES:
+            cookie=request.COOKIES
+            Accesibility=cookie['acces']
+            if Accesibility=='True':
                 museums=museums.exclude(accessibility=False)  
                                
         template=get_template("museum/user.html")

@@ -5,11 +5,11 @@
 <h1> Museos con mayor numero de Likes: </h1>
     {% if acces == 'True' %}
         <form method="get" action="/"><button type="submit">Solo Accesibles</button>
-        <input type="hidden" name="Acces" value="{{acces}}"></form>
+        <input type="hidden" name="Acces" value={{acces}}></form>
         <p>
     {% else %}
         <form method="get" action="/"><button type="submit">Todos</button>
-        <input type="hidden" name="Acces" value="{{acces}}"></form>
+        <input type="hidden" name="Acces" value={{acces}}></form>
         <p>
     {% endif %}
     
